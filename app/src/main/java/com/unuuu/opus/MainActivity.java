@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 
-import com.unuuu.opus.component.CircleCameraFragment;
+import com.unuuu.opus.util.LogUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -13,6 +15,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ImageButton shutterButton = (ImageButton)findViewById(R.id.activity_main_frame_003);
+        shutterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogUtil.d("カシャ!!!");
+            }
+        });
     }
 
     @Override
