@@ -8,7 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.squareup.otto.Subscribe;
 import com.unuuu.opus.R;
+import com.unuuu.opus.event.BusHolder;
+import com.unuuu.opus.event.TakePictureEvent;
 
 /**
  * Created by kashima on 15/06/15.
@@ -33,5 +36,26 @@ public class CircleCameraFragment extends Fragment {
         return mRootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        BusHolder.get().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        BusHolder.get().unregister(this);
+
+        super.onPause();
+    }
+
+    @Subscribe
+    public void subscribe(TakePictureEvent event) {
+        // カメラがない時
+        if (this.mCameraPreview == null) {
+            return;
+        }
+        this.mCameraPreview.takePicture();
+    }
 }

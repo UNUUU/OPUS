@@ -7,22 +7,39 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.unuuu.opus.event.BusHolder;
+import com.unuuu.opus.event.TakePictureEvent;
 import com.unuuu.opus.util.LogUtil;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 public class MainActivity extends AppCompatActivity {
+
+    @InjectView(R.id.activity_main_frame_003)
+    ImageButton mShutterButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageButton shutterButton = (ImageButton)findViewById(R.id.activity_main_frame_003);
-        shutterButton.setOnClickListener(new View.OnClickListener() {
+        ButterKnife.inject(this);
+
+        mShutterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogUtil.d("カシャ!!!");
+                // 写真を撮影するイベントを呼ぶ
+                BusHolder.get().post(new TakePictureEvent());
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        ButterKnife.reset(this);
+
+        super.onDestroy();
     }
 
     @Override

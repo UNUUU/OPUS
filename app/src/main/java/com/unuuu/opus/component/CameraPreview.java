@@ -2,6 +2,7 @@ package com.unuuu.opus.component;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -15,9 +16,9 @@ import com.unuuu.opus.util.LogUtil;
 import java.io.IOException;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
-    private Camera camera;
-    private final SurfaceHolder holder;
-    private Bitmap rounderBitmap;
+    private Camera mCamera;
+    private final SurfaceHolder mHolder;
+    private Bitmap mRounderBitmap;
     private Paint mMaskPaint;
     private boolean mIsAdjustHeight;
 
@@ -28,9 +29,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     public CameraPreview(Context context, Camera camera) {
         super(context);
 
-        this.camera = camera;
-        holder = getHolder();
-        holder.addCallback(this);
+        this.mCamera = camera;
+        this.mHolder = getHolder();
+        this.mHolder.addCallback(this);
 
         this.setDrawingCacheEnabled(true);
     }
@@ -41,10 +42,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         int w = currentBitmap.getWidth();
         int h = currentBitmap.getHeight();
 
-        if (rounderBitmap == null) {
-            rounderBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        if (this.mRounderBitmap == null) {
+            this.mRounderBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         }
-        Canvas c = new Canvas(rounderBitmap);
+        Canvas c = new Canvas(this.mRounderBitmap);
 
         if (mMaskPaint == null) {
             mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -64,7 +65,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mMaskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
 
         canvas.drawBitmap(currentBitmap, 0, 0, mMaskPaint);
-        canvas.drawBitmap(rounderBitmap, 0, 0, null);
+        canvas.drawBitmap(this.mRounderBitmap, 0, 0, null);
     }
 
     private Bitmap get() {
@@ -95,8 +96,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             this.getHolder().setFixedSize((int)(width * scale), (int)(height * scale));
 
             setWillNotDraw(false);
-            camera.setPreviewDisplay(holder);
-            camera.startPreview();
+            this.mCamera.setPreviewDisplay(holder);
+            this.mCamera.startPreview();
         } catch (IOException e) {
             LogUtil.d("Error setting camera preview : " + e.getMessage());
         }
@@ -104,18 +105,18 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        camera.stopPreview();
-        camera.setDisplayOrientation(90);
-        Camera.Parameters parameters = camera.getParameters();
+        this.mCamera.stopPreview();
+        this.mCamera.setDisplayOrientation(90);
+        Camera.Parameters parameters = this.mCamera.getParameters();
         Camera.Size size = getBestPreviewSize(width, height);
         parameters.setPreviewSize(size.width, size.height);
-        camera.setParameters(parameters);
-        camera.startPreview();
+        this.mCamera.setParameters(parameters);
+        this.mCamera.startPreview();
     }
 
     private Camera.Size getBestPreviewSize(int width, int height) {
         Camera.Size result = null;
-        Camera.Parameters p = camera.getParameters();
+        Camera.Parameters p = this.mCamera.getParameters();
         for (Camera.Size size : p.getSupportedPreviewSizes()) {
             if (size.width <= width && size.height <= height) {
                 if (result == null) {
@@ -135,7 +136,54 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        camera.release();
-        camera = null;
+        this.mCamera.release();
+        this.mCamera = null;
     }
+
+    /**
+     * シャッターを切る
+     */
+    public void takePicture() {
+        if (this.mCamera == null) {
+            return;
+        }
+        // 写真を撮影する
+        this.mCamera.takePicture(null, null, mPictureListener);
+    }
+
+    // JPEGイメージ生成後に呼ばれるコールバック
+    private Camera.PictureCallback mPictureListener = new Camera.PictureCallback() {
+        // データ生成完了
+        public void onPictureTaken(byte[] data, Camera camera) {
+            if (data == null) {
+                // TODO:: 写真のデータを取得できない時の処理
+                return;
+            }
+
+            // 縦で撮影すると90度回転して画像が取得できるのでちゃんとする
+//            Bitmap originalBitmap = BitmapFactory.decodeByteArray(
+//                    data, 0, data.length);
+//            int rotatedWidth = originalBitmap.getHeight();
+//            int rotatedHeight = originalBitmap.getWidth();
+//            Bitmap rotatedBitmap = Bitmap.createBitmap(rotatedWidth, rotatedHeight, Bitmap.Config.ARGB_8888);
+//            Canvas canvas = new Canvas(rotatedBitmap);
+//            canvas.save();
+//
+//            canvas.rotate(90, rotatedWidth / 2, rotatedHeight / 2);
+//            int offset = (rotatedHeight - rotatedWidth) / 2 * ((90 - 180) % 180) / 90;
+//            canvas.translate(offset, -offset);
+//            canvas.drawBitmap(originalBitmap, 0, 0, null);
+//            canvas.restore();
+//            originalBitmap.recycle();
+
+//            FileOutputStream fos = null;
+//            try {
+//                fos = new FileOutputStream(Environment.getExternalStorageDirectory().getPath()+ "/camera_test.jpg");
+//                fos.write(data);
+//                fos.close();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+        }
+    };
 }
