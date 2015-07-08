@@ -1,22 +1,28 @@
 package com.unuuu.opus.component;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.unuuu.opus.util.LogUtil;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private Camera mCamera;
@@ -149,7 +155,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             return;
         }
         // 写真を撮影する
-        this.mCamera.takePicture(null, null, mPictureListener);
+        this.mCamera.takePicture(mShutterListener, null, mPictureListener);
     }
 
     // JPEGイメージ生成後に呼ばれるコールバック
@@ -221,20 +227,68 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 circleBitmap.recycle();
             }
 
+            File pictureFile = getOutputMediaFile();
+
+            LogUtil.d("ファイルパス: " + pictureFile.toString());
+
             // ファイルに保存する
             FileOutputStream fos = null;
             try {
-                fos = new FileOutputStream(Environment.getExternalStorageDirectory().getPath()+ "/camera_test.png");
+                fos = new FileOutputStream(pictureFile);
                 rounderBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
                 fos.close();
+
+                // メディアを登録する
+                // TODO:: MediaScannerConnectionに置き替える？
+                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri contentUri = Uri.fromFile(pictureFile);
+                mediaScanIntent.setData(contentUri);
+                getContext().sendBroadcast(mediaScanIntent);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                LogUtil.e("エラー");
             } catch (Exception e) {
                 e.printStackTrace();
+                LogUtil.e("エラー");
             }
 
             rounderBitmap.recycle();
-
-            // プレビューを再開する
-            mCamera.startPreview();
+//
+//            // プレビューを再開する
+//            mCamera.startPreview();
         }
     };
+
+    // 撮影した時に呼ばれるコールバック (これがないと音がならない)
+    private Camera.ShutterCallback mShutterListener =
+            new Camera.ShutterCallback() {
+                public void onShutter() {
+                    // 空でOK。
+                }
+            };
+
+    /**
+     * 撮影した写真を保存するファイルを取得する
+     * @return ファイル
+     */
+    private static File getOutputMediaFile() {
+        File mediaStorageDir = new File(
+                Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                "OPUS");
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                LogUtil.d("ディレクトリの作成に失敗しました");
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
+                .format(new Date());
+        File mediaFile;
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator
+                + "IMG_" + timeStamp + ".jpg");
+
+        return mediaFile;
+    }
 }
