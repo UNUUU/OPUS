@@ -34,16 +34,28 @@ public final class FileUtil {
     }
 
     /**
+     * 指定されたファイルを削除する
+     * @param path ファイルのパス
+     */
+    public static void removeFile(String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
+    /**
      * 画像をダウンロードフォルダに書き込む
      * @param context コンテキスト
      * @param bitmap ビットマップ
      * @param extension 拡張子
+     * @return 画像のパス
      */
-    public static void writeToDownloadDirectory(Context context, Bitmap bitmap, String extension) {
+    public static String writeToDownloadDirectory(Context context, Bitmap bitmap, String extension) {
         String bitmapPath = getDownloadFilePath(extension);
-        LogUtil.d("画像を保存するパス: " + bitmapPath);
         FileUtil.writeBitmap(bitmap, IMAGE_QUALITY, bitmapPath);
         MediaScannerConnection.scanFile(context, new String[]{bitmapPath}, null, null);
+        return bitmapPath;
     }
 
     /**

@@ -11,6 +11,9 @@ import android.hardware.Camera;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.unuuu.opus.PreviewActivity;
+import com.unuuu.opus.event.BusHolder;
+import com.unuuu.opus.event.SavedImageEvent;
 import com.unuuu.opus.util.FileUtil;
 import com.unuuu.opus.util.LogUtil;
 
@@ -18,11 +21,9 @@ import java.io.IOException;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private Camera mCamera;
-    private final SurfaceHolder mHolder;
+    private SurfaceHolder mHolder;
 
-    // Surfaceの大きさ
-    private final static float SURFACE_VIEW_WIDTH = 278.0f;
-    private final static float SURFACE_VIEW_HEIGHT = 278.0f;
+    private final static float SURFACE_VIEW_SIZE = 278.0f;
 
     public CameraPreview(Context context) {
         super(context);
@@ -86,9 +87,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
             float scale;
             if (width > height) {
-                scale = (SURFACE_VIEW_HEIGHT * density) / height;
+                scale = (SURFACE_VIEW_SIZE * density) / height;
             } else {
-                scale = (SURFACE_VIEW_WIDTH * density) / width;
+                scale = (SURFACE_VIEW_SIZE * density) / width;
             }
 
             this.getHolder().setFixedSize((int) (width * scale), (int) (height * scale));
@@ -149,10 +150,18 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             return;
         }
         // 写真を撮影する
-        this.mCamera.takePicture(null, null, mPictureListener);
+        this.mCamera.takePicture(mShutterCallback, null, mPictureListener);
     }
 
-    // JPEGイメージ生成後に呼ばれるコールバック
+    // シャッターがきられる時に呼ばれるコールバック
+    private Camera.ShutterCallback mShutterCallback = new Camera.ShutterCallback() {
+        @Override
+        public void onShutter() {
+
+        }
+    };
+
+    // 撮影後に呼ばれるコールバック
     private Camera.PictureCallback mPictureListener = new Camera.PictureCallback() {
         // データ生成完了
         public void onPictureTaken(byte[] data, Camera camera) {
@@ -180,7 +189,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             }
 
             // 正方形にして画像を丸に切り抜く
-
             // 正方形の1辺の長さをもとめる
             int oneSide;
             if (rotatedWidth > rotatedHeight) {
@@ -220,13 +228,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 rotatedBitmap.recycle();
                 circleBitmap.recycle();
             }
-
-            FileUtil.writeToDownloadDirectory(getContext(), rounderBitmap, "png");
-
+            String imagePath = FileUtil.writeToDownloadDirectory(getContext(), rounderBitmap, "png");
             rounderBitmap.recycle();
 
-            // プレビューを再開する
-            // mCamera.startPreview();
+            // 画像の保存完了
+            BusHolder.get().post(new SavedImageEvent(imagePath));
         }
     };
 }

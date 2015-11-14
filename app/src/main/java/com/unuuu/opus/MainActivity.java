@@ -1,6 +1,9 @@
 package com.unuuu.opus;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,5 +56,15 @@ public class MainActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * アクティビティを起動する
+     * @param activity アクティビティ
+     */
+    public static void startActivity(@NonNull Activity activity) {
+        Intent intent = new Intent(activity, MainActivity.class);
+        activity.startActivity(intent);
+        activity.overridePendingTransition(0, 0);
     }
 }
