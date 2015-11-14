@@ -4,18 +4,16 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.hardware.Camera;
-import android.os.Environment;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.unuuu.opus.util.FileUtil;
 import com.unuuu.opus.util.LogUtil;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
@@ -26,10 +24,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private final static float SURFACE_VIEW_WIDTH = 278.0f;
     private final static float SURFACE_VIEW_HEIGHT = 278.0f;
 
-    public CameraPreview(Context context, Camera camera) {
+    public CameraPreview(Context context) {
         super(context);
 
-        this.mCamera = camera;
         this.mHolder = getHolder();
         this.mHolder.addCallback(this);
 
@@ -94,9 +91,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 scale = (SURFACE_VIEW_WIDTH * density) / width;
             }
 
-            this.getHolder().setFixedSize((int)(width * scale), (int)(height * scale));
+            this.getHolder().setFixedSize((int) (width * scale), (int) (height * scale));
 
             setWillNotDraw(false);
+
+            this.mCamera = Camera.open();
+            this.mCamera.setDisplayOrientation(90);
             this.mCamera.setPreviewDisplay(holder);
             this.mCamera.startPreview();
         } catch (IOException e) {
@@ -221,20 +221,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 circleBitmap.recycle();
             }
 
-            // ファイルに保存する
-            FileOutputStream fos = null;
-            try {
-                fos = new FileOutputStream(Environment.getExternalStorageDirectory().getPath()+ "/camera_test.png");
-                rounderBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                fos.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            FileUtil.writeToDownloadDirectory(getContext(), rounderBitmap, "png");
 
             rounderBitmap.recycle();
 
             // プレビューを再開する
-            mCamera.startPreview();
+            // mCamera.startPreview();
         }
     };
 }

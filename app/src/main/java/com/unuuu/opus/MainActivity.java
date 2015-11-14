@@ -1,30 +1,28 @@
 package com.unuuu.opus;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.unuuu.opus.event.BusHolder;
 import com.unuuu.opus.event.TakePictureEvent;
-import com.unuuu.opus.util.LogUtil;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
-    @InjectView(R.id.activity_main_frame_003)
-    ImageButton mShutterButton;
+    @Bind(R.id.activity_main_frame_003)
+    ImageView mShutterButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         mShutterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,13 +31,6 @@ public class MainActivity extends AppCompatActivity {
                 BusHolder.get().post(new TakePictureEvent());
             }
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        ButterKnife.reset(this);
-
-        super.onDestroy();
     }
 
     @Override

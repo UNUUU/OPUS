@@ -1,0 +1,17 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:innerRadius="0dp"
+       android:shape="ring"
+       android:thicknessRatio="2"
+       android:useLevel="false" >
+    <solid android:color="@android:color/transparent" />
+
+    <stroke
+        android:width="@dimen/circle_image_border_width"
+        android:color="@android:color/white" />
+
+    <padding
+        android:left="@dimen/circle_image_border_width"
+        android:top="@dimen/circle_image_border_width"
+        android:right="@dimen/circle_image_border_width"
+        android:bottom="@dimen/circle_image_border_width" />
+</shape>

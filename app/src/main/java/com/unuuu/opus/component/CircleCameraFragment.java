@@ -1,6 +1,5 @@
 package com.unuuu.opus.component;
 
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,27 +12,31 @@ import com.unuuu.opus.R;
 import com.unuuu.opus.event.BusHolder;
 import com.unuuu.opus.event.TakePictureEvent;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by kashima on 15/06/15.
  */
 public class CircleCameraFragment extends Fragment {
-    View mRootView;
+
+    @Bind(R.id.fragment_circle_camera_layout_001)
+    FrameLayout mRootLayout;
+
+    /** カメラ周りの処理をする */
     CameraPreview mCameraPreview;
 
     // View作成
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState) {
-        // View作成
-        this.mRootView = inflater.inflate(R.layout.fragment_circle_camera, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_circle_camera, container, false);
 
-        Camera camera = Camera.open();
-        camera.setDisplayOrientation(90);
-        this.mCameraPreview = new CameraPreview(getActivity().getApplicationContext(), camera);
+        ButterKnife.bind(this, rootView);
 
-        FrameLayout layout = (FrameLayout)mRootView.findViewById(R.id.fragment_circle_camera_layout_001);
-        layout.addView(this.mCameraPreview);
+        mCameraPreview = new CameraPreview(getActivity().getApplicationContext());
+        mRootLayout.addView(this.mCameraPreview);
 
-        return mRootView;
+        return rootView;
     }
 
     @Override
@@ -50,12 +53,17 @@ public class CircleCameraFragment extends Fragment {
         super.onPause();
     }
 
+    @Override
+    public void onDestroyView() {
+        ButterKnife.unbind(this);
+
+        super.onDestroyView();
+    }
+
+    @SuppressWarnings("unused")
     @Subscribe
     public void subscribe(TakePictureEvent event) {
-        // カメラがない時
-        if (this.mCameraPreview == null) {
-            return;
-        }
+        // 写真撮影をする
         this.mCameraPreview.takePicture();
     }
 }
