@@ -11,8 +11,9 @@ import android.hardware.Camera;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.unuuu.opus.PreviewActivity;
+import com.squareup.otto.Subscribe;
 import com.unuuu.opus.event.BusHolder;
+import com.unuuu.opus.event.ChangeFlashModeEvent;
 import com.unuuu.opus.event.SavedImageEvent;
 import com.unuuu.opus.util.FileUtil;
 import com.unuuu.opus.util.LogUtil;
@@ -138,6 +139,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+        this.mCamera.stopPreview();
         this.mCamera.release();
         this.mCamera = null;
     }
@@ -235,4 +237,36 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             BusHolder.get().post(new SavedImageEvent(imagePath));
         }
     };
+
+    /**
+     * フラッシュモードを切り替える
+     * @param isFlashMode フラッシュをONにするかどうか
+     */
+    private void setFlashMode(boolean isFlashMode) {
+        Camera.Parameters parameters = mCamera.getParameters();
+        if (isFlashMode) {
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+        } else {
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+        }
+        mCamera.setParameters(parameters);
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe
+    public void subscribe(ChangeFlashModeEvent event) {
+        this.setFlashMode(event.mIsFlashMode);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        BusHolder.get().register(this);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        BusHolder.get().unregister(this);
+        super.onDetachedFromWindow();
+    }
 }

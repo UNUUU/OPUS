@@ -27,6 +27,5 @@
         android:src="@drawable/main_shutter"
         android:background="@null"
         android:layout_gravity="center"
-        android:layout_weight="1"
         android:scaleType="fitCenter" />
 </LinearLayout>
