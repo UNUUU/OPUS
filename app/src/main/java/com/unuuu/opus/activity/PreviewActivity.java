@@ -61,7 +61,7 @@ public class PreviewActivity extends BaseActivity {
         String picturePath = getIntent().getStringExtra(KEY_PICTURE_PATH);
         LogUtil.d("画像のパス: " + picturePath);
         setPicture(picturePath);
-        setPictureCreatedDate();
+        setPictureCreatedAt();
 
         shareButton.setOnClickListener(v -> sharePicture(picturePath));
         deleteButton.setOnClickListener(v -> deletePicture(picturePath));
@@ -107,7 +107,7 @@ public class PreviewActivity extends BaseActivity {
     /**
      * 写真の作成日を設定する
      */
-    private void setPictureCreatedDate() {
+    private void setPictureCreatedAt() {
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM", Locale.ENGLISH);
         String month = sdf.format(Calendar.getInstance().getTime());
         sdf = new SimpleDateFormat("yyyy", Locale.ENGLISH);
