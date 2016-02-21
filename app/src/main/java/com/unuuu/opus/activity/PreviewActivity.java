@@ -1,4 +1,4 @@
-package com.unuuu.opus;
+package com.unuuu.opus.activity;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.unuuu.opus.R;
 import com.unuuu.opus.util.FileUtil;
 import com.unuuu.opus.util.LogUtil;
 

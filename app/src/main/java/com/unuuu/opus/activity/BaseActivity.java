@@ -1,4 +1,4 @@
-package com.unuuu.opus;
+package com.unuuu.opus.activity;
 
 import android.support.v7.app.AppCompatActivity;
 
