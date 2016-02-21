@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import com.squareup.otto.Subscribe;
 import com.unuuu.opus.R;
 import com.unuuu.opus.event.BusHolder;
-import com.unuuu.opus.event.SavedImageEvent;
-import com.unuuu.opus.event.TakePictureEvent;
+import com.unuuu.opus.event.PictureSavedEvent;
+import com.unuuu.opus.event.PictureTakenEvent;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,7 +33,7 @@ public class MainActivity extends BaseActivity {
 
         ButterKnife.bind(this);
 
-        shutterButton.setOnClickListener(v -> BusHolder.get().post(new TakePictureEvent()));
+        shutterButton.setOnClickListener(v -> BusHolder.get().post(new PictureTakenEvent()));
     }
 
     @Override
@@ -72,8 +72,8 @@ public class MainActivity extends BaseActivity {
 
 
     @Subscribe
-    public void subscribe(SavedImageEvent event) {
-        Intent intent = PreviewActivity.getCallingIntent(this, event.getImagePath());
+    public void subscribe(PictureSavedEvent event) {
+        Intent intent = PreviewActivity.getCallingIntent(this, event.getPicturePath());
         startActivity(intent);
     }
 }
