@@ -8,7 +8,7 @@ import com.unuuu.opus.di.AppModule;
 import com.unuuu.opus.di.DaggerAppComponent;
 
 public class MainApplication extends Application {
-    AppComponent appComponent;
+    private AppComponent appComponent;
 
     @NonNull
     public AppComponent getComponent() {

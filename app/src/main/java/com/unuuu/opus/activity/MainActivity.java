@@ -1,7 +1,6 @@
 package com.unuuu.opus.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,8 +13,6 @@ import com.unuuu.opus.R;
 import com.unuuu.opus.event.BusHolder;
 import com.unuuu.opus.event.SavedImageEvent;
 import com.unuuu.opus.event.TakePictureEvent;
-
-import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
