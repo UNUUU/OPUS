@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import com.squareup.otto.Subscribe;
 import com.unuuu.opus.R;
 import com.unuuu.opus.event.BusHolder;
-import com.unuuu.opus.event.ChangeFlashModeEvent;
-import com.unuuu.opus.event.TakePictureEvent;
+import com.unuuu.opus.event.FlashModeChangedEvent;
+import com.unuuu.opus.event.PictureTakenEvent;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -72,7 +72,7 @@ public class MainFragment extends Fragment {
             flashButton.setImageResource(R.drawable.main_flash_off);
         }
 
-        BusHolder.get().post(new ChangeFlashModeEvent(isFlashOn));
+        BusHolder.get().post(new FlashModeChangedEvent(isFlashOn));
     }
 
     @Override
@@ -95,7 +95,7 @@ public class MainFragment extends Fragment {
 
 
     @Subscribe
-    public void subscribe(@SuppressWarnings("unused") TakePictureEvent event) {
+    public void subscribe(@SuppressWarnings("unused") PictureTakenEvent event) {
         cameraPreview.takePicture();
     }
 }

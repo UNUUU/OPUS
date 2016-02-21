@@ -3,10 +3,10 @@ package com.unuuu.opus.event;
 /**
  *
  */
-public class ChangeFlashModeEvent {
+public class FlashModeChangedEvent {
     private boolean isFlashMode;
 
-    public ChangeFlashModeEvent(boolean isFlashMode) {
+    public FlashModeChangedEvent(boolean isFlashMode) {
         this.isFlashMode = isFlashMode;
     }
 

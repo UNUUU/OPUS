@@ -13,8 +13,8 @@ import android.view.SurfaceView;
 
 import com.squareup.otto.Subscribe;
 import com.unuuu.opus.event.BusHolder;
-import com.unuuu.opus.event.ChangeFlashModeEvent;
-import com.unuuu.opus.event.SavedImageEvent;
+import com.unuuu.opus.event.FlashModeChangedEvent;
+import com.unuuu.opus.event.PictureSavedEvent;
 import com.unuuu.opus.util.FileUtil;
 import com.unuuu.opus.util.LogUtil;
 
@@ -239,7 +239,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             rounderBitmap.recycle();
 
             // 画像の保存完了
-            BusHolder.get().post(new SavedImageEvent(imagePath));
+            BusHolder.get().post(new PictureSavedEvent(imagePath));
         }
     };
 
@@ -259,7 +259,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     @SuppressWarnings("unused")
     @Subscribe
-    public void subscribe(ChangeFlashModeEvent event) {
+    public void subscribe(FlashModeChangedEvent event) {
         setFlashMode(event.isFlashMode());
     }
 
