@@ -1,4 +1,4 @@
-package com.unuuu.opus;
+package com.unuuu.opus.activity;
 
 import android.Manifest;
 import android.content.Intent;

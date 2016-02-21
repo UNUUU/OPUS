@@ -1,18 +1,21 @@
-package com.unuuu.opus;
+package com.unuuu.opus.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.squareup.otto.Subscribe;
+import com.unuuu.opus.R;
 import com.unuuu.opus.event.BusHolder;
 import com.unuuu.opus.event.SavedImageEvent;
 import com.unuuu.opus.event.TakePictureEvent;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,13 +36,7 @@ public class MainActivity extends BaseActivity {
 
         ButterKnife.bind(this);
 
-        shutterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 写真を撮影するイベントを呼ぶ
-                BusHolder.get().post(new TakePictureEvent());
-            }
-        });
+        shutterButton.setOnClickListener(v -> BusHolder.get().post(new TakePictureEvent()));
     }
 
     @Override

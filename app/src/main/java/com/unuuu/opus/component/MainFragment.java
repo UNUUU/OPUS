@@ -9,11 +9,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.squareup.otto.Subscribe;
-import com.unuuu.opus.PreviewActivity;
 import com.unuuu.opus.R;
 import com.unuuu.opus.event.BusHolder;
 import com.unuuu.opus.event.ChangeFlashModeEvent;
-import com.unuuu.opus.event.SavedImageEvent;
 import com.unuuu.opus.event.TakePictureEvent;
 
 import butterknife.Bind;
