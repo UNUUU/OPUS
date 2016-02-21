@@ -23,16 +23,14 @@ public class MainFragment extends Fragment {
      */
     private boolean isFlashOn = false;
 
-    /**
-     * カメラ周りの処理をする
-     */
-    private CameraPreview cameraPreview;
-
     @Bind(R.id.fragment_main_image_flash)
     ImageView flashButton;
 
     @Bind(R.id.fragment_main_layout_camera)
     FrameLayout cameraLayout;
+
+    @Bind(R.id.fragment_main_preview_camera)
+    CameraPreview cameraPreview;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

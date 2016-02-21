@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center">
         <com.unuuu.opus.component.CameraPreview
+            android:id="@+id/fragment_main_preview_camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </FrameLayout>
