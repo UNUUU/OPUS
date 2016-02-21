@@ -124,14 +124,16 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        camera.stopPreview();
-        camera.setDisplayOrientation(90);
-        Camera.Parameters parameters = camera.getParameters();
-        Camera.Size size = getBestPreviewSize(width, height);
-        parameters.setPreviewSize(size.width, size.height);
-        camera.setParameters(parameters);
         try {
+            camera.stopPreview();
+            camera.setDisplayOrientation(90);
+            Camera.Parameters parameters = camera.getParameters();
+            Camera.Size size = getBestPreviewSize(width, height);
+            parameters.setPreviewSize(size.width, size.height);
+            camera.setParameters(parameters);
             camera.startPreview();
+        } catch (NullPointerException e) {
+            LogUtil.e(e);
         } catch (RuntimeException e) {
             LogUtil.e(e);
         }
@@ -272,7 +274,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         camera.setParameters(parameters);
     }
 
-    @SuppressWarnings("unused")
     @Subscribe
     public void subscribe(FlashModeChangedEvent event) {
         setFlashMode(event.isFlashMode());
