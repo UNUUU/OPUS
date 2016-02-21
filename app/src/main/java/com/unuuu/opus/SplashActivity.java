@@ -1,6 +1,7 @@
 package com.unuuu.opus;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
@@ -33,7 +34,8 @@ public class SplashActivity extends BaseActivity {
      */
     @NeedsPermissions({Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA})
     void checkPermissionsCameraAndStorage() {
-        MainActivity.startActivity(this);
+        Intent intent = MainActivity.getCallingIntent(this);
+        startActivity(intent);
         finish();
     }
 

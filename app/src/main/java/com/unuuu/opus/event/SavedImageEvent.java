@@ -6,8 +6,13 @@ import android.support.annotation.NonNull;
  *
  */
 public class SavedImageEvent {
-    public String mImagePath;
+    private String imagePath;
+
     public SavedImageEvent(@NonNull String imagePath) {
-        mImagePath = imagePath;
+        this.imagePath = imagePath;
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 }

@@ -21,18 +21,19 @@ import com.unuuu.opus.util.LogUtil;
 import java.io.IOException;
 
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
-    private Camera mCamera;
-    private SurfaceHolder mHolder;
+    
+    private Camera camera;
+    private SurfaceHolder holder;
 
     private final static float SURFACE_VIEW_SIZE = 278.0f;
 
     public CameraPreview(Context context) {
         super(context);
 
-        this.mHolder = getHolder();
-        this.mHolder.addCallback(this);
+        holder = getHolder();
+        holder.addCallback(this);
 
-        this.setDrawingCacheEnabled(true);
+        setDrawingCacheEnabled(true);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private Bitmap get() {
-        return this.getDrawingCache();
+        return getDrawingCache();
     }
 
     @Override
@@ -93,14 +94,14 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 scale = (SURFACE_VIEW_SIZE * density) / width;
             }
 
-            this.getHolder().setFixedSize((int) (width * scale), (int) (height * scale));
+            getHolder().setFixedSize((int) (width * scale), (int) (height * scale));
 
             setWillNotDraw(false);
 
-            this.mCamera = Camera.open();
-            this.mCamera.setDisplayOrientation(90);
-            this.mCamera.setPreviewDisplay(holder);
-            this.mCamera.startPreview();
+            camera = Camera.open();
+            camera.setDisplayOrientation(90);
+            camera.setPreviewDisplay(holder);
+            camera.startPreview();
         } catch (IOException e) {
             LogUtil.d("Error setting camera preview : " + e.getMessage());
         }
@@ -108,18 +109,22 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        this.mCamera.stopPreview();
-        this.mCamera.setDisplayOrientation(90);
-        Camera.Parameters parameters = this.mCamera.getParameters();
+        camera.stopPreview();
+        camera.setDisplayOrientation(90);
+        Camera.Parameters parameters = camera.getParameters();
         Camera.Size size = getBestPreviewSize(width, height);
         parameters.setPreviewSize(size.width, size.height);
-        this.mCamera.setParameters(parameters);
-        this.mCamera.startPreview();
+        camera.setParameters(parameters);
+        try {
+            camera.startPreview();
+        } catch (RuntimeException e) {
+            LogUtil.e(e);
+        }
     }
 
     private Camera.Size getBestPreviewSize(int width, int height) {
         Camera.Size result = null;
-        Camera.Parameters p = this.mCamera.getParameters();
+        Camera.Parameters p = camera.getParameters();
         for (Camera.Size size : p.getSupportedPreviewSizes()) {
             if (size.width <= width && size.height <= height) {
                 if (result == null) {
@@ -139,20 +144,20 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        this.mCamera.stopPreview();
-        this.mCamera.release();
-        this.mCamera = null;
+        camera.stopPreview();
+        camera.release();
+        camera = null;
     }
 
     /**
      * シャッターを切る
      */
     public void takePicture() {
-        if (this.mCamera == null) {
+        if (camera == null) {
             return;
         }
         // 写真を撮影する
-        this.mCamera.takePicture(mShutterCallback, null, mPictureListener);
+        camera.takePicture(mShutterCallback, null, mPictureListener);
     }
 
     // シャッターがきられる時に呼ばれるコールバック
@@ -243,19 +248,19 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
      * @param isFlashMode フラッシュをONにするかどうか
      */
     private void setFlashMode(boolean isFlashMode) {
-        Camera.Parameters parameters = mCamera.getParameters();
+        Camera.Parameters parameters = camera.getParameters();
         if (isFlashMode) {
             parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
         } else {
             parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
         }
-        mCamera.setParameters(parameters);
+        camera.setParameters(parameters);
     }
 
     @SuppressWarnings("unused")
     @Subscribe
     public void subscribe(ChangeFlashModeEvent event) {
-        this.setFlashMode(event.mIsFlashMode);
+        setFlashMode(event.isFlashMode());
     }
 
     @Override

@@ -4,8 +4,13 @@ package com.unuuu.opus.event;
  *
  */
 public class ChangeFlashModeEvent {
-    public boolean mIsFlashMode;
+    private boolean isFlashMode;
+
     public ChangeFlashModeEvent(boolean isFlashMode) {
-        mIsFlashMode = isFlashMode;
+        this.isFlashMode = isFlashMode;
+    }
+
+    public boolean isFlashMode() {
+        return isFlashMode;
     }
 }

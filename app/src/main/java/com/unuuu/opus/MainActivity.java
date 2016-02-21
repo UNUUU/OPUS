@@ -9,7 +9,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.squareup.otto.Subscribe;
 import com.unuuu.opus.event.BusHolder;
+import com.unuuu.opus.event.SavedImageEvent;
 import com.unuuu.opus.event.TakePictureEvent;
 
 import butterknife.Bind;
@@ -17,8 +19,12 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity {
 
-    @Bind(R.id.activity_main_frame_003)
-    ImageView mShutterButton;
+    public static Intent getCallingIntent(@NonNull Activity activity) {
+        return new Intent(activity, MainActivity.class);
+    }
+
+    @Bind(R.id.activity_main_image_shutter)
+    ImageView shutterButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,13 +33,25 @@ public class MainActivity extends BaseActivity {
 
         ButterKnife.bind(this);
 
-        mShutterButton.setOnClickListener(new View.OnClickListener() {
+        shutterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 写真を撮影するイベントを呼ぶ
                 BusHolder.get().post(new TakePictureEvent());
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        BusHolder.get().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        BusHolder.get().unregister(this);
     }
 
     @Override
@@ -58,13 +76,10 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * アクティビティを起動する
-     * @param activity アクティビティ
-     */
-    public static void startActivity(@NonNull Activity activity) {
-        Intent intent = new Intent(activity, MainActivity.class);
-        activity.startActivity(intent);
-        activity.overridePendingTransition(0, 0);
+
+    @Subscribe
+    public void subscribe(SavedImageEvent event) {
+        Intent intent = PreviewActivity.getCallingIntent(this, event.getImagePath());
+        startActivity(intent);
     }
 }
