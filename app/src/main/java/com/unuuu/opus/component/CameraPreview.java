@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.hardware.Camera;
+import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -29,10 +30,22 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     public CameraPreview(Context context) {
         super(context);
+        init(context);
+    }
 
+    public CameraPreview(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
+    }
+
+    public CameraPreview(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(context);
+    }
+
+    public void init(@SuppressWarnings("unused") Context context) {
         holder = getHolder();
         holder.addCallback(this);
-
         setDrawingCacheEnabled(true);
     }
 
@@ -102,6 +115,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             camera.setDisplayOrientation(90);
             camera.setPreviewDisplay(holder);
             camera.startPreview();
+        } catch (RuntimeException e) {
+            LogUtil.e(e);
         } catch (IOException e) {
             LogUtil.d("Error setting camera preview : " + e.getMessage());
         }

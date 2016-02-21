@@ -40,8 +40,6 @@ public class MainFragment extends Fragment {
 
         ButterKnife.bind(this, rootView);
 
-        initCamera();
-
         flashButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,14 +48,6 @@ public class MainFragment extends Fragment {
         });
 
         return rootView;
-    }
-
-    /**
-     * カメラを初期化する
-     */
-    private void initCamera() {
-        cameraPreview = new CameraPreview(getActivity().getApplicationContext());
-        cameraLayout.addView(cameraPreview);
     }
 
     /**
