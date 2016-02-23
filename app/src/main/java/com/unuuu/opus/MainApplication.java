@@ -35,6 +35,8 @@ public class MainApplication extends Application {
                 .appModule(new AppModule(this))
                 .build();
 
+        new StethoWrapper(this).setup();
+
         Glide.get(this).register(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory(httpClient));
     }
 }

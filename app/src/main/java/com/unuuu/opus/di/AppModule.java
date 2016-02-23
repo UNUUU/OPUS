@@ -3,6 +3,8 @@ package com.unuuu.opus.di;
 import android.app.Application;
 import android.content.Context;
 
+import com.facebook.stetho.okhttp3.StethoInterceptor;
+
 import java.io.File;
 
 import javax.inject.Singleton;
@@ -37,6 +39,7 @@ public class AppModule {
         Cache cache = new Cache(cacheDir, MAX_CACHE_SIZE);
         OkHttpClient.Builder c = new OkHttpClient.Builder()
                 .cache(cache)
+                .addNetworkInterceptor(new StethoInterceptor())
                 .addInterceptor(interceptor);
         return c.build();
     }
